@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IR 리포트 · 브이드림 (VDREAM)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR",
+                   sans-serif;
+      background: #f0f2f5;
+      color: #222;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── 헤더 ── */
+    .header {
+      background: linear-gradient(150deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      padding: 28px 20px 24px;
+    }
+    .header-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .6px;
+      padding: 3px 8px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+    .header .period {
+      font-size: 13px;
+      opacity: .65;
+      margin-bottom: 14px;
+    }
+    .meta-row {
+      font-size: 12px;
+      opacity: .7;
+      line-height: 1.9;
+    }
+    .score-wrap {
+      margin-top: 18px;
+      background: rgba(255,255,255,.1);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: inline-block;
+    }
+    .score-label {
+      font-size: 11px;
+      opacity: .7;
+      margin-bottom: 4px;
+      letter-spacing: .4px;
+    }
+    .stars svg { display: inline-block; }
+    .score-num {
+      font-size: 15px;
+      font-weight: 700;
+      margin-left: 4px;
+    }
+    .no-score { font-size: 13px; opacity: .7; }
+
+    /* ── 본문 ── */
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 16px 14px 32px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 6px rgba(0,0,0,.07);
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f2027;
+      margin-bottom: 10px;
+      letter-spacing: .2px;
+    }
+    .card-body {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #444;
+    }
+
+    /* 재무 테이블 */
+    .fin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .fin-table td {
+      padding: 8px 0;
+      font-size: 14px;
+      border-bottom: 1px solid #f2f2f2;
+    }
+    .fin-table tr:last-child td { border-bottom: none; }
+    .fin-table td:first-child { color: #888; width: 42%; }
+    .fin-table td:last-child { font-weight: 600; color: #222; }
+
+    /* AI 요약 강조 */
+    .card-summary {
+      border-left: 4px solid #2c5364;
+      background: #f7f9fc;
+    }
+    .card-summary .card-title { color: #2c5364; }
+    .card-summary .card-body { color: #333; }
+
+    /* 링크 버튼 */
+    .btn-wrap {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .btn {
+      flex: 1;
+      min-width: 130px;
+      display: block;
+      text-align: center;
+      padding: 12px 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .btn-mail  { background: #f0f4ff; color: #3355cc; }
+    .btn-sheet { background: #f0faf4; color: #1a7a4a; }
+
+    /* 푸터 */
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: #bbb;
+      padding: 12px 0 24px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">IR Report</div>
+  <h1>브이드림 (VDREAM)</h1>
+  
+  <div class="meta-row">
+    📅 수신일: Fri, 20 Mar 2026 23:37:48 +0900<br>
+    ✉️ 발신자: Myoung-Jin Shin <mjshin47@gmail.com>
+  </div>
+  <div class="score-wrap">
+    <div class="score-label">투자 매력도</div>
+    <span class="stars"><svg width="20" height="20" viewBox="0 0 24 24" fill="#f5a623" style="vertical-align:middle"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="#f5a623" style="vertical-align:middle"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="#f5a623" style="vertical-align:middle"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="#ddd" style="vertical-align:middle"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="#ddd" style="vertical-align:middle"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span> <span class="score-num">3 / 5</span>
+  </div>
+</div>
+
+<div class="container">
+
+  
+    <div class="card ">
+      <div class="card-title">💼 핵심 사업 내용</div>
+      <div class="card-body">장애인 특화 재택근무 시스템 '플립(Flipped)'을 중심으로 한 B2B SaaS HR 솔루션 제공. 장애 유형별 역량 모델링 및 직무 세분화를 통해 기업의 장애인 의무고용을 지원하며, 특수학교·요양시설 대상 안심케어 플랫폼 '폴딧(Fold it)'과 장애예술인 갤러리 등으로 사업을 확장 중. 베트남, 몽골, 일본 등 글로벌 시장 진출도 추진 중.</div>
+    </div>
+  
+  
+    <div class="card ">
+      <div class="card-title">🔭 향후 전망</div>
+      <div class="card-body">장애인 고용 부담금 시장(약 9,500억 원 규모) 및 보조공학기기, 안심케어 플랫폼 등 멀티 버티컬 확장을 통해 총 26조 원 이상의 시장을 타깃으로 성장 추진. 일본 LITALICO 등 해외 파트너십을 통한 글로벌 시장 진출 및 사회적약자 통합 커뮤니티 플랫폼으로의 발전을 목표로 함.</div>
+    </div>
+  
+    <div class="card ">
+      <div class="card-title">⚠️ 주요 리스크</div>
+      <div class="card-body">장애인 의무고용 대상 기업의 78% 이상이 부담금 납부를 선택하는 시장 구조로 인한 수요 창출 어려움. 재무 정보 미공개로 실제 수익성 및 사업 안정성 검증 불가. 공공기관·대기업 중심의 영업 사이클이 길고 복잡할 수 있음.</div>
+    </div>
+
+  <div class="card card-summary">
+    <div class="card-title">🤖 AI 종합 의견</div>
+    <div class="card-body">브이드림은 장애인 특화 재택근무 플랫폼 '플립'을 핵심으로 하는 B2B SaaS 기업으로, 장애인 의무고용 제도의 사각지대를 기술로 해결하는 사회적 가치 중심의 비즈니스 모델을 보유하고 있음. HR 솔루션 외에도 특수학교 안심케어 플랫폼, 장애예술인 플랫폼, 보조공학기기 등으로 사업 다각화를 추진 중. 다양한 업종의 고객사와 파트너십을 구축하였으며, 베트남·일본 등 해외 시장 진출도 활발히 모색 중. 다만 본 문서에는 매출·이익 등 재무 지표가 전혀 공개되어 있지 않아 재무 안정성 판단이 어려움. 사회적 문제 해결 가능성과 시장 성장성은 높으나, 초기 스타트업 특성상 투자 리스크도 상당히 존재함.</div>
+  </div>
+
+  <div class="card"><div class="card-title">🔗 바로가기</div><div class="btn-wrap"><a class="btn btn-mail" href="https://mail.google.com/mail/u/0/#inbox/19d0bae9fdf728fa" target="_blank">📧 원본 이메일</a><a class="btn btn-sheet" href="https://docs.google.com/spreadsheets/d/1p1bpOqXAtol5Vw1r3n--PqzwAH42oDtW8ig4eudeWuc" target="_blank">📊 전체 분석 시트</a></div></div>
+
+</div>
+
+<div class="footer">
+  Generated by IR Analyzer &nbsp;·&nbsp; 2026-03-20 23:38
+</div>
+
+</body>
+</html>
