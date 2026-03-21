@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IR 리포트 · 루나소프트 (LunaSoft Inc.)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR",
+                   sans-serif;
+      background: #f0f2f5;
+      color: #222;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── 헤더 ── */
+    .header {
+      background: linear-gradient(150deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      padding: 28px 20px 24px;
+    }
+    .header-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .6px;
+      padding: 3px 8px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+    .header .period {
+      font-size: 13px;
+      opacity: .65;
+      margin-bottom: 14px;
+    }
+    .meta-row {
+      font-size: 12px;
+      opacity: .7;
+      line-height: 1.9;
+    }
+    .score-wrap {
+      margin-top: 18px;
+      background: rgba(255,255,255,.1);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: inline-block;
+      min-width: 200px;
+    }
+    .score-label {
+      font-size: 11px;
+      opacity: .7;
+      margin-bottom: 6px;
+      letter-spacing: .4px;
+    }
+    .no-score { font-size: 13px; opacity: .7; }
+
+    /* 총점 게이지 */
+    .gauge-wrap { }
+    .gauge-score {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .gauge-denom {
+      font-size: 16px;
+      font-weight: 500;
+      opacity: .7;
+    }
+    .gauge-bar-bg {
+      background: rgba(255,255,255,.2);
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .gauge-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width .4s ease;
+    }
+
+    /* 항목별 점수 */
+    .score-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .score-item { }
+    .score-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+    .score-item-label {
+      font-size: 13px;
+      color: #444;
+      font-weight: 600;
+    }
+    .score-item-val {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f2027;
+    }
+    .score-item-max {
+      font-size: 11px;
+      color: #aaa;
+      font-weight: 400;
+    }
+    .score-item-bar-bg {
+      background: #eee;
+      border-radius: 4px;
+      height: 7px;
+      overflow: hidden;
+    }
+    .score-item-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: #2c5364;
+    }
+    .score-comment {
+      font-size: 12px;
+      color: #888;
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+
+    /* ── 본문 ── */
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 16px 14px 32px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 6px rgba(0,0,0,.07);
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f2027;
+      margin-bottom: 10px;
+      letter-spacing: .2px;
+    }
+    .card-body {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #444;
+    }
+
+    /* 재무 테이블 */
+    .fin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .fin-table td {
+      padding: 8px 0;
+      font-size: 14px;
+      border-bottom: 1px solid #f2f2f2;
+    }
+    .fin-table tr:last-child td { border-bottom: none; }
+    .fin-table td:first-child { color: #888; width: 42%; }
+    .fin-table td:last-child { font-weight: 600; color: #222; }
+
+    /* AI 요약 강조 */
+    .card-summary {
+      border-left: 4px solid #2c5364;
+      background: #f7f9fc;
+    }
+    .card-summary .card-title { color: #2c5364; }
+    .card-summary .card-body { color: #333; }
+
+    /* 링크 버튼 */
+    .btn-wrap {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .btn {
+      flex: 1;
+      min-width: 130px;
+      display: block;
+      text-align: center;
+      padding: 12px 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .btn-mail  { background: #f0f4ff; color: #3355cc; }
+    .btn-sheet { background: #f0faf4; color: #1a7a4a; }
+
+    /* 푸터 */
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: #bbb;
+      padding: 12px 0 24px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">IR Report</div>
+  <h1>루나소프트 (LunaSoft Inc.)</h1>
+  <div class="period">2026년 3월 (시리즈 A IR 기준)</div>
+  <div class="meta-row">
+    📅 수신일: 2026-03-21 10:30:00<br>
+    ✉️ 발신자: ceo@lunasoft.kr
+  </div>
+  <div class="score-wrap">
+    <div class="score-label">투자 종합 점수</div>
+    
+<div class="gauge-wrap">
+  <div class="gauge-score">84<span class="gauge-denom">/100</span></div>
+  <div class="gauge-bar-bg">
+    <div class="gauge-bar-fill" style="width:84%;background:#2ecc71"></div>
+  </div>
+</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="card-title">📊 항목별 투자 평가</div>
+    <div class="card-body"><div class="score-breakdown">
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">팀 역량</span>
+          <span class="score-item-val">22<span class="score-item-max">/25</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:88%"></div>
+        </div>
+        <div class="score-comment">대표(전 네이버 ML 팀장, KAIST 박사)와 CTO(전 카카오, 서울대 석사) 등 창업팀 3인 모두 동일 도메인 10년 이상 경력을 보유하여 팀 역량이 매우 우수합니다. MVP 출시 6개월 만에 유료 고객 120개사 확보라는 빠른 실행력이 팀 역량을 실증적으로 증명합니다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">시장성</span>
+          <span class="score-item-val">21<span class="score-item-max">/25</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:84%"></div>
+        </div>
+        <div class="score-comment">국내 SCM 소프트웨어 TAM 2조 3천억원, AI 재고최적화 SAM 4,500억원으로 시장 규모가 충분하며 연 22% 성장률은 매력적입니다. 정부 디지털전환 보조금 및 ERP 교체 사이클과 맞물린 진입 타이밍이 매우 유리하게 작용하고 있습니다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">제품·차별성</span>
+          <span class="score-item-val">17<span class="score-item-max">/20</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:85%"></div>
+        </div>
+        <div class="score-comment">특허 2건 등록 및 독자 수요예측 엔진으로 기술적 해자를 확보했으며, MAPE 8.3%는 업계 평균(21%) 대비 압도적 우위입니다. 기존 ERP API 연동으로 도입 장벽을 낮추고 도입 기간을 90일에서 7일로 단축한 점이 강력한 차별화 포인트입니다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">사업성·지표</span>
+          <span class="score-item-val">17<span class="score-item-max">/20</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:85%"></div>
+        </div>
+        <div class="score-comment">2025년 매출 310% 성장, NRR 118%, 월 해지율 0.8%는 SaaS 스타트업으로서 매우 건강한 지표입니다. 다만 절대적 고객 수(120개사)와 매출 규모(ARR 12억원)는 아직 초기 단계로, 스케일업 속도가 향후 핵심 관건입니다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">확장성·회수</span>
+          <span class="score-item-val">7<span class="score-item-max">/10</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:70%"></div>
+        </div>
+        <div class="score-comment">2029년 코스닥 상장 및 SAP·Oracle 등 글로벌 ERP 벤더 M&A 가능성으로 회수 시나리오가 구체적으로 제시되어 있습니다. 동남아 확장 계획은 긍정적이나 실제 글로벌 실행 역량은 아직 검증이 필요한 단계입니다.</div>
+      </div></div></div>
+  </div>
+  
+    <div class="card ">
+      <div class="card-title">💼 핵심 사업 내용</div>
+      <div class="card-body">루나소프트는 중소기업(SME) 대상 AI 기반 재고 자동화 SaaS를 제공하는 스타트업으로, 독자 개발 수요예측 엔진을 통해 기존 ERP와 API 연동 방식으로 빠른 도입(7일)을 지원합니다. 월정액 구독 모델(49만원~299만원)로 운영되며, 예측 정확도(MAPE 8.3%)에서 업계 평균 대비 월등한 성능을 보유하고 있습니다. 국내 SCM SaaS 시장을 기반으로 동남아시아 확장 및 글로벌 ERP 벤더 M&A를 중장기 전략으로 추진 중입니다.</div>
+    </div>
+  
+    <div class="card">
+      <div class="card-title">📈 재무 정보</div>
+      <table class="fin-table"><tr><td>매출액</td><td>8억 4천만원 (2025년 연간 매출), ARR 12억원 (2026년 3월 기준)</td></tr><tr><td>영업이익</td><td>-2억 1천만원 (2025년, 마케팅 투자 단계)</td></tr></table>
+    </div>
+  
+    <div class="card ">
+      <div class="card-title">🔭 향후 전망</div>
+      <div class="card-body">2026년 4분기 손익분기점(고객 200개사) 달성을 목표로 하며, ARR 12억원 기반의 안정적 성장세를 유지 중. 2027년 베트남·태국 동남아 시장 진출 및 2029년 코스닥 상장(매출 200억원)을 중장기 목표로 설정. 정부 디지털전환 보조금 및 AI 도입 규제 수혜로 시장 진입 타이밍이 유리한 상황.</div>
+    </div>
+  
+    <div class="card ">
+      <div class="card-title">⚠️ 주요 리스크</div>
+      <div class="card-body">현재 영업손실 상태로 손익분기점(2026년 4분기)까지 지속적인 자금 소요가 예상되며, 글로벌 확장 시 현지화 및 경쟁 리스크 존재. 고객 수 120개사로 아직 규모가 작아 대형 경쟁사 진입 시 시장 방어력이 검증되지 않은 상태.</div>
+    </div>
+
+  <div class="card card-summary">
+    <div class="card-title">🤖 AI 종합 의견</div>
+    <div class="card-body">루나소프트는 2023년 창업 후 약 2년 만에 유료 고객 120개사, ARR 12억원, NRR 118%를 달성한 AI 재고 자동화 SaaS 스타트업입니다. 네이버·카카오 출신 도메인 전문가로 구성된 창업팀이 특허 기술 기반의 높은 예측 정확도와 빠른 도입 속도로 경쟁 우위를 확보하고 있습니다. 현재 영업손실 상태이나 310% 매출 성장률과 낮은 해지율(월 0.8%)로 성장 모멘텀이 뚜렷합니다. 시리즈 A 30억원을 통해 제품 고도화, 영업 확대, 글로벌 PoC를 추진하며 2026년 4분기 흑자전환을 목표로 합니다. 중장기적으로 동남아 확장 및 코스닥 상장을 통한 투자 회수 시나리오를 보유하고 있습니다.</div>
+  </div>
+
+  <div class="card"><div class="card-title">🔗 바로가기</div><div class="btn-wrap"><a class="btn btn-mail" href="https://mail.google.com/mail/u/0/#inbox/test_email_001" target="_blank">📧 원본 이메일</a><a class="btn btn-sheet" href="https://docs.google.com/spreadsheets/d/1p1bpOqXAtol5Vw1r3n--PqzwAH42oDtW8ig4eudeWuc" target="_blank">📊 전체 분석 시트</a></div></div>
+
+</div>
+
+<div class="footer">
+  Generated by IR Analyzer &nbsp;·&nbsp; 2026-03-21 19:52
+</div>
+
+</body>
+</html>
