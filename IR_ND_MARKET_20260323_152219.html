@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IR 리포트 · 주식회사 남도마켓 (ND MARKET)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR",
+                   sans-serif;
+      background: #f0f2f5;
+      color: #222;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── 헤더 ── */
+    .header {
+      background: linear-gradient(150deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      padding: 28px 20px 24px;
+    }
+    .header-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .6px;
+      padding: 3px 8px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+    .header .period {
+      font-size: 13px;
+      opacity: .65;
+      margin-bottom: 14px;
+    }
+    .meta-row {
+      font-size: 12px;
+      opacity: .7;
+      line-height: 1.9;
+    }
+    .score-wrap {
+      margin-top: 18px;
+      background: rgba(255,255,255,.1);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: inline-block;
+      min-width: 200px;
+    }
+    .score-label {
+      font-size: 11px;
+      opacity: .7;
+      margin-bottom: 6px;
+      letter-spacing: .4px;
+    }
+    .no-score { font-size: 13px; opacity: .7; }
+
+    /* 총점 게이지 */
+    .gauge-wrap { }
+    .gauge-score {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .gauge-denom {
+      font-size: 16px;
+      font-weight: 500;
+      opacity: .7;
+    }
+    .gauge-bar-bg {
+      background: rgba(255,255,255,.2);
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .gauge-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width .4s ease;
+    }
+
+    /* 항목별 점수 */
+    .score-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .score-item { }
+    .score-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+    .score-item-label {
+      font-size: 13px;
+      color: #444;
+      font-weight: 600;
+    }
+    .score-item-val {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f2027;
+    }
+    .score-item-max {
+      font-size: 11px;
+      color: #aaa;
+      font-weight: 400;
+    }
+    .score-item-bar-bg {
+      background: #eee;
+      border-radius: 4px;
+      height: 7px;
+      overflow: hidden;
+    }
+    .score-item-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: #2c5364;
+    }
+    .score-comment {
+      font-size: 12px;
+      color: #888;
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+
+    /* ── 본문 ── */
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 16px 14px 32px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 6px rgba(0,0,0,.07);
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f2027;
+      margin-bottom: 10px;
+      letter-spacing: .2px;
+    }
+    .card-body {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #444;
+    }
+
+    /* 재무 테이블 */
+    .fin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .fin-table td {
+      padding: 8px 0;
+      font-size: 14px;
+      border-bottom: 1px solid #f2f2f2;
+    }
+    .fin-table tr:last-child td { border-bottom: none; }
+    .fin-table td:first-child { color: #888; width: 42%; }
+    .fin-table td:last-child { font-weight: 600; color: #222; }
+
+    /* AI 요약 강조 */
+    .card-summary {
+      border-left: 4px solid #2c5364;
+      background: #f7f9fc;
+    }
+    .card-summary .card-title { color: #2c5364; }
+    .card-summary .card-body { color: #333; }
+
+    /* 링크 버튼 */
+    .btn-wrap {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .btn {
+      flex: 1;
+      min-width: 130px;
+      display: block;
+      text-align: center;
+      padding: 12px 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .btn-mail  { background: #f0f4ff; color: #3355cc; }
+    .btn-sheet { background: #f0faf4; color: #1a7a4a; }
+
+    /* 푸터 */
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: #bbb;
+      padding: 12px 0 24px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">IR Report</div>
+  <h1>주식회사 남도마켓 (ND MARKET)</h1>
+  <div class="period">2025년 (연간 기준, IR 자료 기준)</div>
+  <div class="meta-row">
+    📅 수신일: Mon, 23 Mar 2026 15:19:51 +0900<br>
+    ✉️ 발신자: Myoung-Jin Shin <mjshin47@gmail.com>
+  </div>
+  <div class="score-wrap">
+    <div class="score-label">투자 종합 점수</div>
+    
+<div class="gauge-wrap">
+  <div class="gauge-score">88<span class="gauge-denom">/100</span></div>
+  <div class="gauge-bar-bg">
+    <div class="gauge-bar-fill" style="width:88%;background:#2ecc71"></div>
+  </div>
+</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="card-title">📊 항목별 투자 평가</div>
+    <div class="card-body"><div class="score-breakdown">
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">팀 역량</span>
+          <span class="score-item-val">22<span class="score-item-max">/25</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:88%"></div>
+        </div>
+        <div class="score-comment">대표 양승우는 G마켓 출신 온라인 유통 전문가이며, 도매 20년 경력의 공동창업자, AI 전문가, 동대문 핀테크 CEO 출신 등 도메인·기술·금융을 모두 커버하는 소수 정예 팀 구성이 매우 인상적이다. AI 에이전트 기반 실행 문화와 바이브 코딩을 통한 빠른 PoC 구조는 실행력을 수치로 증명하고 있다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">시장성</span>
+          <span class="score-item-val">23<span class="score-item-max">/25</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:92%"></div>
+        </div>
+        <div class="score-comment">국내 도소매 시장 1,717조원, 핵심 남·동대문 45조원 규모에서 디지털 전환율이 30% 미만으로 TAM-SAM-SOM 구조가 명확하고 성장 여지가 크다. 글로벌 도매 클러스터 5개국 중 하나인 한국의 K-트렌드 허브 지위와 K-뷰티·K-굿즈 수요 확대로 글로벌 시장성도 높다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">제품·차별성</span>
+          <span class="score-item-val">17<span class="score-item-max">/20</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:85%"></div>
+        </div>
+        <div class="score-comment">AI 임베딩 검색, 이미지 기반 상품 등록, RAG 실시간 시장 분석, AI 도매 신용평가 등 도매 특화 AI 인프라를 초기부터 내재화한 구조적 해자(Moat)가 명확하다. 동일 GMV 대비 인력 효율이 경쟁사 대비 압도적이며, TIPS AI 기술 우수 졸업·대통령 표창 등 외부 검증도 완료되었다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">사업성·지표</span>
+          <span class="score-item-val">18<span class="score-item-max">/20</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:90%"></div>
+        </div>
+        <div class="score-comment">2023년 103억→2024년 1,255억→2025년 3,681억원으로 GMV가 폭발적으로 성장했고, 재구매율 47.9%, 앱 평점 4.6, CAC 624원·LTV 65만원의 우수한 단위 경제를 보유하고 있다. 3년 연속 BEP 달성과 핀테크 PoC 검증(r=0.83)으로 수익 모델의 지속 가능성도 입증되었다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">확장성·회수</span>
+          <span class="score-item-val">8<span class="score-item-max">/10</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:80%"></div>
+        </div>
+        <div class="score-comment">20개국 수출, OKTA 75개국 154개 지회 네트워크, 일본·미국·동남아 파트너십 등 글로벌 확장 인프라가 이미 구축되어 있다. 2027~2028년 IPO 또는 글로벌 커머스·핀테크·유통 기업의 전략적 M&A 시나리오가 구체적으로 제시되어 있어 회수 가능성이 높다.</div>
+      </div></div></div>
+  </div>
+  
+    <div class="card ">
+      <div class="card-title">💼 핵심 사업 내용</div>
+      <div class="card-body">남대문·동대문 등 전통 도매시장을 AI 기반으로 디지털 전환하는 B2B 도매 커머스 플랫폼. ND MARKET(커머스)과 ND UNCLE(SaaS)을 통해 주문·정산·수출·금융을 통합 제공. AI 신용평가 기반 핀테크(긴급생산자금, ND PAY)와 글로벌 K-도매 수출까지 확장 중.</div>
+    </div>
+  
+    <div class="card">
+      <div class="card-title">📈 재무 정보</div>
+      <table class="fin-table"><tr><td>매출액</td><td>228.6억원 (2025년 매출)</td></tr><tr><td>당기순이익</td><td>4.3억원 (2025년 당기순이익)</td></tr></table>
+    </div>
+  
+    <div class="card ">
+      <div class="card-title">🔭 향후 전망</div>
+      <div class="card-body">2026년 시리즈 A 50억원 투자 유치를 통해 마케팅·M&A·AI 고도화·글로벌 확장을 추진. 2026년 GMV 9,690억원, 매출 439억원, 순이익 29억원 목표. 동대문 점유율 1위 달성, K-뷰티 도매 글로벌 확장, OKTA 네트워크 기반 해외 지부 4개소 운영 계획. 2027~2028년 IPO 또는 전략적 M&A를 통한 엑싯 시나리오 보유.</div>
+    </div>
+  
+    <div class="card ">
+      <div class="card-title">⚠️ 주요 리스크</div>
+      <div class="card-body">1) 전통 도매시장 특성상 디지털 전환 속도가 느려 온보딩 저항 존재. 2) 경쟁사(신상마켓, 도매꾹 등) 및 대형 자본의 시장 진입 가능성. 3) AI 신용평가 기반 금융 서비스의 부실 리스크 및 규제 리스크. 4) 글로벌 확장 시 현지화 실패 및 환율·물류 리스크. 5) 현재 적자 구조에서 수익성 전환까지의 운영 자금 소진 리스크.</div>
+    </div>
+
+  <div class="card card-summary">
+    <div class="card-title">🤖 AI 종합 의견</div>
+    <div class="card-body">남도마켓은 2020년 설립된 AI 기반 B2B 도매 커머스 플랫폼으로, 남대문 55%·동대문 41% 점유율을 확보하며 2025년 연 거래액 3,681억원, 매출 228억원을 달성했다. AI 자동화로 직원 수를 36명에서 27명으로 줄이면서도 월 거래액을 24억에서 553억으로 2,304% 성장시키는 고효율 구조를 입증했다. ND PAY·긴급생산자금 등 핀테크 레이어를 거래 데이터 기반으로 결합해 수익성과 락인을 동시에 강화하고 있다. 20개국 수출, OKTA 글로벌 네트워크, K-뷰티 확장 등 글로벌 성장 전략도 구체적으로 실행 중이다. 3년 연속 BEP를 달성하며 수익 구조를 검증했고, 시리즈 A 투자를 통해 도매 생태계 주도권 완성과 IPO를 목표로 하고 있다.</div>
+  </div>
+
+  <div class="card"><div class="card-title">🔗 바로가기</div><div class="btn-wrap"><a class="btn btn-mail" href="https://mail.google.com/mail/u/0/#inbox/19d1959ef8253a50" target="_blank">📧 원본 이메일</a><a class="btn btn-sheet" href="https://docs.google.com/spreadsheets/d/1p1bpOqXAtol5Vw1r3n--PqzwAH42oDtW8ig4eudeWuc" target="_blank">📊 전체 분석 시트</a></div></div>
+
+</div>
+
+<div class="footer">
+  Generated by IR Analyzer &nbsp;·&nbsp; 2026-03-23 15:22
+</div>
+
+</body>
+</html>
