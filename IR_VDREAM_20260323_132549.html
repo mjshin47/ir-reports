@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IR 리포트 · 브이드림 (VDREAM)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR",
+                   sans-serif;
+      background: #f0f2f5;
+      color: #222;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── 헤더 ── */
+    .header {
+      background: linear-gradient(150deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      padding: 28px 20px 24px;
+    }
+    .header-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .6px;
+      padding: 3px 8px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+    .header .period {
+      font-size: 13px;
+      opacity: .65;
+      margin-bottom: 14px;
+    }
+    .meta-row {
+      font-size: 12px;
+      opacity: .7;
+      line-height: 1.9;
+    }
+    .score-wrap {
+      margin-top: 18px;
+      background: rgba(255,255,255,.1);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: inline-block;
+      min-width: 200px;
+    }
+    .score-label {
+      font-size: 11px;
+      opacity: .7;
+      margin-bottom: 6px;
+      letter-spacing: .4px;
+    }
+    .no-score { font-size: 13px; opacity: .7; }
+
+    /* 총점 게이지 */
+    .gauge-wrap { }
+    .gauge-score {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .gauge-denom {
+      font-size: 16px;
+      font-weight: 500;
+      opacity: .7;
+    }
+    .gauge-bar-bg {
+      background: rgba(255,255,255,.2);
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .gauge-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width .4s ease;
+    }
+
+    /* 항목별 점수 */
+    .score-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .score-item { }
+    .score-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+    .score-item-label {
+      font-size: 13px;
+      color: #444;
+      font-weight: 600;
+    }
+    .score-item-val {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f2027;
+    }
+    .score-item-max {
+      font-size: 11px;
+      color: #aaa;
+      font-weight: 400;
+    }
+    .score-item-bar-bg {
+      background: #eee;
+      border-radius: 4px;
+      height: 7px;
+      overflow: hidden;
+    }
+    .score-item-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: #2c5364;
+    }
+    .score-comment {
+      font-size: 12px;
+      color: #888;
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+
+    /* ── 본문 ── */
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 16px 14px 32px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 6px rgba(0,0,0,.07);
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f2027;
+      margin-bottom: 10px;
+      letter-spacing: .2px;
+    }
+    .card-body {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #444;
+    }
+
+    /* 재무 테이블 */
+    .fin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .fin-table td {
+      padding: 8px 0;
+      font-size: 14px;
+      border-bottom: 1px solid #f2f2f2;
+    }
+    .fin-table tr:last-child td { border-bottom: none; }
+    .fin-table td:first-child { color: #888; width: 42%; }
+    .fin-table td:last-child { font-weight: 600; color: #222; }
+
+    /* AI 요약 강조 */
+    .card-summary {
+      border-left: 4px solid #2c5364;
+      background: #f7f9fc;
+    }
+    .card-summary .card-title { color: #2c5364; }
+    .card-summary .card-body { color: #333; }
+
+    /* 링크 버튼 */
+    .btn-wrap {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .btn {
+      flex: 1;
+      min-width: 130px;
+      display: block;
+      text-align: center;
+      padding: 12px 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .btn-mail  { background: #f0f4ff; color: #3355cc; }
+    .btn-sheet { background: #f0faf4; color: #1a7a4a; }
+
+    /* 푸터 */
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: #bbb;
+      padding: 12px 0 24px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">IR Report</div>
+  <h1>브이드림 (VDREAM)</h1>
+  
+  <div class="meta-row">
+    📅 수신일: Mon, 23 Mar 2026 11:51:05 +0900<br>
+    ✉️ 발신자: Myoung-Jin Shin <mjshin47@gmail.com>
+  </div>
+  <div class="score-wrap">
+    <div class="score-label">투자 종합 점수</div>
+    
+<div class="gauge-wrap">
+  <div class="gauge-score">68<span class="gauge-denom">/100</span></div>
+  <div class="gauge-bar-bg">
+    <div class="gauge-bar-fill" style="width:68%;background:#f5a623"></div>
+  </div>
+</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="card-title">📊 항목별 투자 평가</div>
+    <div class="card-body"><div class="score-breakdown">
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">팀 역량</span>
+          <span class="score-item-val">16<span class="score-item-max">/25</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:64%"></div>
+        </div>
+        <div class="score-comment">2019년 정식 런칭 이후 꾸준히 사업을 운영해온 실행력이 확인되며, 대표의 장애인 고용 문제에 대한 명확한 문제의식과 사명감이 돋보인다. 다만 핵심 팀원의 전문성 및 조직 구성에 대한 정보가 부족하여 팀 역량 전반을 평가하기 어렵다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">시장성</span>
+          <span class="score-item-val">18<span class="score-item-max">/25</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:72%"></div>
+        </div>
+        <div class="score-comment">장애인 의무고용 부담금 시장(약 9,264억), 안심케어 플랫폼(약 26조) 등 국내외 타깃 시장 규모가 상당하며, 고령화 및 생산인구 감소라는 사회적 트렌드가 시장 성장을 뒷받침한다. 의무고용 미이행 기업 비율이 78%에 달해 잠재 수요가 크고 진입 타이밍도 적절하다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">제품·차별성</span>
+          <span class="score-item-val">15<span class="score-item-max">/20</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:75%"></div>
+        </div>
+        <div class="score-comment">장애 유형별 역량 모델링과 재택근무 특화 시스템은 기존 일반 HR 솔루션과 차별화된 독창적 접근이며, 노무 법령 28가지 충족 및 웹 접근성 특화 기능은 기술적 해자로 작용할 수 있다. 다만 경쟁사 대비 기술적 우위에 대한 구체적 근거가 부족하다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">사업성·지표</span>
+          <span class="score-item-val">12<span class="score-item-max">/20</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:60%"></div>
+        </div>
+        <div class="score-comment">다양한 업종(제조, 공공기관, IT, 의료, 건설 등)의 고객사를 확보하고 있으며 파트너십도 다수 구축되어 있어 초기 시장 검증은 이루어진 것으로 보인다. 그러나 매출, 고용 장애인 수, 고객사 수 등 구체적인 정량 지표가 공개되지 않아 사업 성과 평가에 한계가 있다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">확장성·회수</span>
+          <span class="score-item-val">7<span class="score-item-max">/10</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:70%"></div>
+        </div>
+        <div class="score-comment">베트남, 일본 등 해외 시장 진출을 구체적으로 추진 중이며 글로벌 확장 가능성은 긍정적이다. 사회적 가치와 수익성을 동시에 추구하는 모델로 ESG 트렌드에 부합해 M&A 또는 IPO 가능성이 있으나, 재무 지표 부재로 투자금 회수 시나리오 구체성이 낮다.</div>
+      </div></div></div>
+  </div>
+  
+    <div class="card ">
+      <div class="card-title">💼 핵심 사업 내용</div>
+      <div class="card-body">장애인 특화 재택근무 시스템 '플립(Flipped)'을 핵심으로 하는 B2B SaaS HR 솔루션 기업으로, 기업의 장애인 의무고용 문제를 해결한다. 장애 유형별 역량 모델링 및 직무 세분화를 통해 장애인 근로자와 기업을 매칭하며, 특수학교·요양시설 대상 안심케어 플랫폼 '폴딧(Fold it)'과 장애예술인 플랫폼 등으로 사업을 확장 중이다.</div>
+    </div>
+  
+  
+    <div class="card ">
+      <div class="card-title">🔭 향후 전망</div>
+      <div class="card-body">베트남, 몽골, 키르기스스탄, 일본 등 글로벌 시장 진출을 추진 중이며, 일본 최대 장애인 교육·취업 기업 LITALICO 및 SMS와 협의를 진행하고 있다. 국내 장애인 HR 시장(약 9,264억), 안심케어 플랫폼(약 26조), 보조공학기기 시장 등 다양한 인접 시장으로의 확장을 목표로 하고 있다.</div>
+    </div>
+  
+    <div class="card ">
+      <div class="card-title">⚠️ 주요 리스크</div>
+      <div class="card-body">의무고용 대상 기업의 78% 이상이 부담금 납부를 선택하는 구조적 관성이 존재하며, 장애인 재택근무에 대한 기업 인식 전환이 필요하다. 또한 공공·복지 영역 의존도가 높아 정책 변화에 따른 사업 리스크가 있으며, 구체적인 매출 및 재무 지표가 공개되지 않아 사업 안정성 검증이 어렵다.</div>
+    </div>
+
+  <div class="card card-summary">
+    <div class="card-title">🤖 AI 종합 의견</div>
+    <div class="card-body">브이드림은 장애인 특화 재택근무 HR 플랫폼 '플립'을 중심으로 기업의 장애인 의무고용 문제를 해결하는 B2B SaaS 기업이다. 장애 유형별 역량 모델링과 직무 세분화를 통해 실질적인 장애인 고용 환경을 조성하며, 다양한 업종의 고객사를 보유하고 있다. 안심케어 플랫폼, 장애예술인 플랫폼, 보조공학기기 등으로 사업 영역을 확장하며 사회적 약자 통합 플랫폼으로 성장을 도모하고 있다. 베트남, 일본 등 해외 시장 진출도 추진 중으로 글로벌 확장 가능성을 모색하고 있으나, 구체적인 재무 성과 지표는 공개되지 않은 상태이다.</div>
+  </div>
+
+  <div class="card"><div class="card-title">🔗 바로가기</div><div class="btn-wrap"><a class="btn btn-mail" href="https://mail.google.com/mail/u/0/#inbox/19d189aabc59bec6" target="_blank">📧 원본 이메일</a><a class="btn btn-sheet" href="https://docs.google.com/spreadsheets/d/1p1bpOqXAtol5Vw1r3n--PqzwAH42oDtW8ig4eudeWuc" target="_blank">📊 전체 분석 시트</a></div></div>
+
+</div>
+
+<div class="footer">
+  Generated by IR Analyzer &nbsp;·&nbsp; 2026-03-23 13:25
+</div>
+
+</body>
+</html>
