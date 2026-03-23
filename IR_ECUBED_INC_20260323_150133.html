@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IR 리포트 · ECUBED INC. (설립 예정)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR",
+                   sans-serif;
+      background: #f0f2f5;
+      color: #222;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── 헤더 ── */
+    .header {
+      background: linear-gradient(150deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      padding: 28px 20px 24px;
+    }
+    .header-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .6px;
+      padding: 3px 8px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+    .header .period {
+      font-size: 13px;
+      opacity: .65;
+      margin-bottom: 14px;
+    }
+    .meta-row {
+      font-size: 12px;
+      opacity: .7;
+      line-height: 1.9;
+    }
+    .score-wrap {
+      margin-top: 18px;
+      background: rgba(255,255,255,.1);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: inline-block;
+      min-width: 200px;
+    }
+    .score-label {
+      font-size: 11px;
+      opacity: .7;
+      margin-bottom: 6px;
+      letter-spacing: .4px;
+    }
+    .no-score { font-size: 13px; opacity: .7; }
+
+    /* 총점 게이지 */
+    .gauge-wrap { }
+    .gauge-score {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .gauge-denom {
+      font-size: 16px;
+      font-weight: 500;
+      opacity: .7;
+    }
+    .gauge-bar-bg {
+      background: rgba(255,255,255,.2);
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .gauge-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width .4s ease;
+    }
+
+    /* 항목별 점수 */
+    .score-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .score-item { }
+    .score-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+    .score-item-label {
+      font-size: 13px;
+      color: #444;
+      font-weight: 600;
+    }
+    .score-item-val {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f2027;
+    }
+    .score-item-max {
+      font-size: 11px;
+      color: #aaa;
+      font-weight: 400;
+    }
+    .score-item-bar-bg {
+      background: #eee;
+      border-radius: 4px;
+      height: 7px;
+      overflow: hidden;
+    }
+    .score-item-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: #2c5364;
+    }
+    .score-comment {
+      font-size: 12px;
+      color: #888;
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+
+    /* ── 본문 ── */
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 16px 14px 32px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 6px rgba(0,0,0,.07);
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f2027;
+      margin-bottom: 10px;
+      letter-spacing: .2px;
+    }
+    .card-body {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #444;
+    }
+
+    /* 재무 테이블 */
+    .fin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .fin-table td {
+      padding: 8px 0;
+      font-size: 14px;
+      border-bottom: 1px solid #f2f2f2;
+    }
+    .fin-table tr:last-child td { border-bottom: none; }
+    .fin-table td:first-child { color: #888; width: 42%; }
+    .fin-table td:last-child { font-weight: 600; color: #222; }
+
+    /* AI 요약 강조 */
+    .card-summary {
+      border-left: 4px solid #2c5364;
+      background: #f7f9fc;
+    }
+    .card-summary .card-title { color: #2c5364; }
+    .card-summary .card-body { color: #333; }
+
+    /* 링크 버튼 */
+    .btn-wrap {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .btn {
+      flex: 1;
+      min-width: 130px;
+      display: block;
+      text-align: center;
+      padding: 12px 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .btn-mail  { background: #f0f4ff; color: #3355cc; }
+    .btn-sheet { background: #f0faf4; color: #1a7a4a; }
+
+    /* 푸터 */
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: #bbb;
+      padding: 12px 0 24px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">IR Report</div>
+  <h1>ECUBED INC. (설립 예정)</h1>
+  <div class="period">2026년 2월 (파트너십 제안서 기준)</div>
+  <div class="meta-row">
+    📅 수신일: Mon, 23 Mar 2026 14:30:27 +0900<br>
+    ✉️ 발신자: Myoung-Jin Shin <mjshin47@gmail.com>
+  </div>
+  <div class="score-wrap">
+    <div class="score-label">투자 종합 점수</div>
+    
+<div class="gauge-wrap">
+  <div class="gauge-score">70<span class="gauge-denom">/100</span></div>
+  <div class="gauge-bar-bg">
+    <div class="gauge-bar-fill" style="width:70%;background:#f5a623"></div>
+  </div>
+</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="card-title">📊 항목별 투자 평가</div>
+    <div class="card-body"><div class="score-breakdown">
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">팀 역량</span>
+          <span class="score-item-val">18<span class="score-item-max">/25</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:72%"></div>
+        </div>
+        <div class="score-comment">이호준 박사(세계 최초 건축용 투명디스플레이 개발), 최성근 대표(G-Tainer 실전 운영), 송민훈 교수(글로벌 디자인 120여 개 수상) 등 기술·시장·디자인 전 영역을 커버하는 검증된 핵심 인력을 보유하고 있다. 다만 법인 미설립 상태로 팀 결속력 및 실행 체계의 공식화가 아직 이루어지지 않은 점은 리스크 요인이다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">시장성</span>
+          <span class="score-item-val">19<span class="score-item-max">/25</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:76%"></div>
+        </div>
+        <div class="score-comment">한국·유럽·미국 3개 시장 합산 TAM 약 1조 3,830억원으로 시장 규모가 충분히 크며, 글로벌 이벤트·페스티벌 산업의 LED 미디어 인프라 수요 증가 트렌드와 맞닿아 있다. 다만 시장 산출이 가정 기반이며 실제 침투 가능한 SOM 수준의 구체적 근거가 다소 부족하다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">제품·차별성</span>
+          <span class="score-item-val">15<span class="score-item-max">/20</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:75%"></div>
+        </div>
+        <div class="score-comment">G-Tainer 대비 설치시간 78% 단축, 중량 57% 경량화, 디스플레이 밝기 1,700% 향상 등 명확한 기술적 차별성을 보유하며, 구조물과 미디어를 통합한 수익 창출형 인프라라는 독창적 포지셔닝이 강점이다. 단, 설계 완료율 70~80% 수준으로 아직 양산 검증이 완료되지 않아 실제 제품 완성도 확인이 필요하다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">사업성·지표</span>
+          <span class="score-item-val">11<span class="score-item-max">/20</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:55%"></div>
+        </div>
+        <div class="score-comment">G-Tainer를 통해 평창올림픽, 에든버러 프린지, 뉴욕 타임스퀘어, 도쿄 야외이벤트 등 4개국 실증 사례를 확보한 점은 유의미한 검증 성과이나, E-Tainer 자체의 매출·계약·파일럿 실적은 전무하다. 법인 미설립 및 제품 양산 전 단계로 현재 트랙션 지표가 매우 초기 수준이다.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-item-header">
+          <span class="score-item-label">확장성·회수</span>
+          <span class="score-item-val">7<span class="score-item-max">/10</span></span>
+        </div>
+        <div class="score-item-bar-bg">
+          <div class="score-item-bar-fill" style="width:70%"></div>
+        </div>
+        <div class="score-comment">한국·유럽·미국 글로벌 시장을 명확히 타겟팅하고 있으며, 제조사 독점권 구조와 렌탈 플랫폼 모델은 M&A 및 IPO 내러티브 구성에 유리하다. 다만 현재 단계가 파트너십 제안 수준으로 실제 글로벌 확장 및 투자금 회수까지의 경로가 구체화되지 않아 회수 시나리오의 현실성 검증이 필요하다.</div>
+      </div></div></div>
+  </div>
+  
+    <div class="card ">
+      <div class="card-title">💼 핵심 사업 내용</div>
+      <div class="card-body">ECUBED는 기존 G-Tainer(투명 LED 미디어 컨테이너) 사업의 한계를 극복한 차세대 E-Tainer를 개발하여 글로벌 이벤트 인프라 렌탈 플랫폼을 구축하는 기업이다. E-Tainer는 경량화(1.5톤), 조립식 구조, 고휘도 투명 디스플레이(7,000+ nits)를 통합한 수익 창출형 미디어 인프라로, 행사 주최사에 렌탈 서비스를 제공한다. ACE Engineering과의 전략적 파트너십을 통해 독점 제조권 및 양산 체계를 확보하고 한국·유럽·미국 시장(TAM 약 1조 3,830억원)을 공략할 계획이다.</div>
+    </div>
+  
+  
+    <div class="card ">
+      <div class="card-title">🔭 향후 전망</div>
+      <div class="card-body">글로벌 TAM 약 2.1조원(한국·유럽·미국 3개 시장 합산) 규모의 이벤트 인프라 시장을 목표로, ACE Engineering과의 파트너십을 통해 양산 및 렌탈 사업을 본격화할 계획이다. 80대 규모 렌탈 사업자 기준 정상 가동률(80%) 달성 시 연 영업이익 88.5억원, BEP 1.6년이 예상되며, 제조사는 50% 마진 구조를 확보할 수 있다. 장기적으로 콘텐츠·광고 수익 레이어 추가 및 IPO 내러티브 구축을 통한 플랫폼 기업으로의 전환을 지향한다.</div>
+    </div>
+  
+    <div class="card ">
+      <div class="card-title">⚠️ 주요 리스크</div>
+      <div class="card-body">1) ECUBED는 자금 확보 후 설립 예정인 미설립 법인으로 실제 사업 실적이 없음. 2) E-Tainer 설계 완료율이 70~80% 수준으로 아직 양산 전 단계임. 3) 팬데믹 등 외부 충격에 취약한 이벤트 산업 특성상 수요 변동성 리스크 존재. 4) 글로벌 시장 진출 시 현지 인증·규제 대응 및 물류 운영 역량 확보 필요. 5) 시장 규모 산출이 가정 기반으로 실제 수요와 괴리 가능성 있음.</div>
+    </div>
+
+  <div class="card card-summary">
+    <div class="card-title">🤖 AI 종합 의견</div>
+    <div class="card-body">ECUBED는 G-Tainer(투명 미디어 컨테이너) 사업의 글로벌 검증 경험(한국·영국·미국·일본)을 바탕으로 차세대 E-Tainer를 개발 중인 이벤트 인프라 스타트업이다. E-Tainer는 설치시간 78% 단축, 중량 57% 경량화, 운송효율 300% 향상 등 전 지표에서 G-Tainer 대비 획기적 개선을 달성한 설계를 보유하고 있다. 현재 자금 확보 후 법인 설립 예정 단계로, ACE Engineering에 8억원 대출 및 금형·제조 투자를 요청하며 독점 제조권을 제공하는 파트너십을 제안하고 있다. 글로벌 TAM은 약 1조 3,830억원으로 추산되며, 렌탈 사업자 기준 BEP 1.6년의 매력적인 수익 구조를 제시한다. 다만 미설립 법인이자 제품 양산 전 단계로 실행 리스크가 존재하며, 시장 가정의 현실화 여부가 핵심 변수이다.</div>
+  </div>
+
+  <div class="card"><div class="card-title">🔗 바로가기</div><div class="btn-wrap"><a class="btn btn-mail" href="https://mail.google.com/mail/u/0/#inbox/19d192c8481ee865" target="_blank">📧 원본 이메일</a><a class="btn btn-sheet" href="https://docs.google.com/spreadsheets/d/1p1bpOqXAtol5Vw1r3n--PqzwAH42oDtW8ig4eudeWuc" target="_blank">📊 전체 분석 시트</a></div></div>
+
+</div>
+
+<div class="footer">
+  Generated by IR Analyzer &nbsp;·&nbsp; 2026-03-23 15:01
+</div>
+
+</body>
+</html>
